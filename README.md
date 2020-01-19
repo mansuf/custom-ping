@@ -1,7 +1,7 @@
 # custom-ping
 Customized 'ping.exe' for Windows in Batch.
 ###
-You can Change Host Address and Custom Messages for Ping While Running it!!
+You can Change Host Address and Custom Output Messages While Running it!!
 
 
 ### How to Use it ?
