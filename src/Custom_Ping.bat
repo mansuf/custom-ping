@@ -282,6 +282,8 @@ if %VAR_ERROR%==Request (
 echo Return ERROR : Result not Found, Make sure you type correctly host or server address
 goto init
 
+
+::Debugging in Azure Pipelines
 :debug_azure_pipelines
 goto init_preparation
 :loop_azure
