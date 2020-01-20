@@ -3,15 +3,17 @@
 ::Written in Batch Language
 
 ::Checking for Debug Mode (You can do it too, type ["Custom_Ping.bat" -debug])
+set loop_azure=1
+set debug_azure=0
+set debug_ping=0
 if "%1"=="" (
     @echo off
     cls
 ) else (
     if "%1"=="-debug" echo on
     if "%1"=="-debug-ping" @echo off && set debug_ping=1 && goto debug_ping
+    if "%1"=="-run-azure-pipelines" @echo off && set debug_azure=1 && goto debug_azure_pipelines
 )
-
-set debug_ping=0
 ::Preparation from 'config.txt' file and 'custom_ping_messages' folder for Custom Ping
 :init_preparation
 set searched=0
@@ -171,6 +173,7 @@ for /f "tokens=*" %%b in ('type "custom_ping_messages\messagesDNU.txt"') do set 
 for /f "tokens=*" %%b in ('type "custom_ping_messages\messagesGF.txt"') do set PING_GENERAL_FAILURE=%%b
 
 set searched=1
+if %debug_azure%==1 goto loop_azure
 if %missing_messages%==1 goto 1time_message
 if "%ADDRESS_SERVER%"=="" call :scm_find_server_address
 echo # Host / Server Address > config.txt
@@ -201,6 +204,7 @@ goto 1time_message
 
 :1time_message
 title Custom Ping by trollfist20 , Server: %ADDRESS_SERVER%
+if %debug_azure%==1 goto search_custom_messages
 if %debug_ping%==1 goto loop
 if %message_showed%==1 goto Module_Ping
 echo Ping Customed Version v1.0 
@@ -277,6 +281,17 @@ if %VAR_ERROR%==Request (
 )
 echo Return ERROR : Result not Found, Make sure you type correctly host or server address
 goto init
+
+:debug_azure_pipelines
+goto init_preparation
+:loop_azure
+if 20 LEQ 20 echo [20] %PING_20%
+if 70 LEQ 70 echo [70] %PING_70%
+if 200 LEQ 200 echo [200] %PING_200%
+if 500 LEQ 500 echo [500] %PING_500%
+if 3000 LEQ 3000 echo [3000] %PING_3000%
+exit
+
 
 :scm_find_server_address
 for /f "tokens=3" %%b in ('type config.txt ^| findstr server_address') do set ADDRESS_SERVER=%%b
