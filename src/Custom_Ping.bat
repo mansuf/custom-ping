@@ -70,6 +70,7 @@ if "%COM%"=="NOT_FOUND" (
     goto create_config
 )
 if %message_showed%==1 goto preparation2
+:find_address_server
 for /f "tokens=3" %%b in ('type config.txt ^| findstr server_address') do set ADDRESS_SERVER=%%b
 goto preparation2
 
@@ -119,6 +120,21 @@ echo press enter if you want to leave it Default
 set PING_3000=Your internet is VERY BAD
 set /p "PING_3000=>"
 cls
+echo type Anything if ping 'timed out'
+echo press enter if you want to leave it Default
+set PING_TIMED_OUT=Your internet is NOT RESPONDING!!!
+set /p "PING_TIMED_OUT=>"
+cls
+echo type Anything if ping 'Destination net unreachable'
+echo press enter if you want to leave it Default
+set PING_DNU=Connected but no internet.
+set /p "PING_DNU=>"
+cls
+echo type Anything if ping 'General Failure'
+echo press enter if you want to leave it Default
+set PING_GENERAL_FAILURE=Something not right...
+set /p "PING_GENERAL_FAILURE=>"
+cls
 goto write_custom_messages
 ::if 'custom_ping_messages' is missing, recreating a new one with Default value (Example : 'Ping less than 20' printing 'Your internet IS UNBELIEVEABLE!!!')
 :write_custom_messages
@@ -137,6 +153,9 @@ echo %PING_70% > custom_ping_messages\messages70.txt
 echo %PING_200% > custom_ping_messages\messages200.txt
 echo %PING_500% > custom_ping_messages\messages500.txt
 echo %PING_3000% > custom_ping_messages\messages3000.txt
+echo %PING_TIMED_OUT% > custom_ping_messages\messagesTO.txt
+echo %PING_DNU% > custom_ping_messages\messagesDNU.txt
+echo %PING_GENERAL_FAILURE% > custom_ping_messages\messagesGF.txt
 goto search_custom_messages
 
 
@@ -147,8 +166,13 @@ for /f "tokens=*" %%b in ('type "custom_ping_messages\messages70.txt"') do set P
 for /f "tokens=*" %%b in ('type "custom_ping_messages\messages200.txt"') do set PING_200=%%b
 for /f "tokens=*" %%b in ('type "custom_ping_messages\messages500.txt"') do set PING_500=%%b
 for /f "tokens=*" %%b in ('type "custom_ping_messages\messages3000.txt"') do set PING_3000=%%b
+for /f "tokens=*" %%b in ('type "custom_ping_messages\messagesTO.txt"') do set PING_TIMED_OUT=%%b
+for /f "tokens=*" %%b in ('type "custom_ping_messages\messagesDNU.txt"') do set PING_DNU=%%b
+for /f "tokens=*" %%b in ('type "custom_ping_messages\messagesGF.txt"') do set PING_GENERAL_FAILURE=%%b
+
 set searched=1
 if %missing_messages%==1 goto 1time_message
+if "%ADDRESS_SERVER%"=="" call :scm_find_server_address
 echo # Host / Server Address > config.txt
 echo server_address = %ADDRESS_SERVER% >> config.txt
 echo # Change the output Messages ping (1 = yes , 0 = no) >> config.txt
@@ -240,16 +264,20 @@ goto init
 set VAR_ERROR=NOT_FOUND
 for /f "tokens=1" %%b in ("%VAR%") do set VAR_ERROR=%%b
 if %VAR_ERROR%==General (
-    echo [General Failure] Something not right...
+    echo [General Failure] %PING_GENERAL_FAILURE%
     goto init
 )
 if %VAR_ERROR%==Reply (
-    echo [Destination net unreachable] Connected but no internet.
+    echo [Destination net unreachable] %PING_DNU%
     goto init
 )
 if %VAR_ERROR%==Request (
-    echo [Timed Out] Your internet is NOT RESPONDING!!!
+    echo [Timed Out] %PING_TIMED_OUT%
     goto init
 )
 echo Return ERROR : Result not Found, Make sure you type correctly host or server address
 goto init
+
+:scm_find_server_address
+for /f "tokens=3" %%b in ('type config.txt ^| findstr server_address') do set ADDRESS_SERVER=%%b
+set ADDRESS_SERVER2=%ADDRESS_SERVER%
