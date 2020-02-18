@@ -7,6 +7,7 @@
 
 ::Checking for Debug Mode (You can do it too, type "Custom_Ping.bat" -debug)
 ::or You want to check your custom messages ?, type "Custom_Ping.bat" -debug-ping
+title LOADING...
 set init_count=0
 set loop_azure=1
 set debug_azure=0
@@ -19,6 +20,7 @@ if "%1"=="" (
     if "%1"=="-debug-ping" @echo off && set debug_ping=1 && goto debug_ping
     if "%1"=="-run-azure-pipelines" @echo off && set debug_azure=1 && goto debug_azure_pipelines
 )
+
 ::Preparation from 'config.txt' file and 'custom_ping_messages' folder for Custom Ping
 :init_preparation
 set searched=0
@@ -261,7 +263,7 @@ goto 1time_message
 ::Pinging 8.8.8.8 with 32 bytes of data
 
 :1time_message
-title Custom Ping by trollfist20 , Server: %ADDRESS_SERVER%
+title Custom Ping by trollfist20 , Server: %ADDRESS_SERVER% %VAR_TTL_MODIFIED% %count_messages%%count%
 if %debug_azure%==1 goto search_custom_messages
 if %debug_ping%==1 goto loop
 if %message_showed%==1 goto Module_Ping
@@ -303,23 +305,23 @@ goto search_custom_messages
 
 :Module_Ping_Success2
 if %VAR_MODIFED_VERIFY_2% LEQ 20 (
-    echo [%VAR_MODIFED_VERIFY_2%] %PING_20% %VAR_TTL_MODIFIED% %count_messages%%count%
+    echo [%VAR_MODIFED_VERIFY_2%] %PING_20% 
     goto init
 )
 if %VAR_MODIFED_VERIFY_2% LEQ 70 (
-    echo [%VAR_MODIFED_VERIFY_2%] %PING_70% %VAR_TTL_MODIFIED% %count_messages%%count%
+    echo [%VAR_MODIFED_VERIFY_2%] %PING_70% 
     goto init
 )
 if %VAR_MODIFED_VERIFY_2% LEQ 200 (
-    echo [%VAR_MODIFED_VERIFY_2%] %PING_200% %VAR_TTL_MODIFIED% %count_messages%%count%
+    echo [%VAR_MODIFED_VERIFY_2%] %PING_200% 
     goto init
 ) 
 if %VAR_MODIFED_VERIFY_2% LEQ 500 (
-    echo [%VAR_MODIFED_VERIFY_2%] %PING_500% %VAR_TTL_MODIFIED% %count_messages%%count%
+    echo [%VAR_MODIFED_VERIFY_2%] %PING_500% 
     goto init
 )
 if %VAR_MODIFED_VERIFY_2% LEQ 3000 (
-    echo [%VAR_MODIFED_VERIFY_2%] %PING_3000% %VAR_TTL_MODIFIED% %count_messages%%count%
+    echo [%VAR_MODIFED_VERIFY_2%] %PING_3000% 
     goto init
 )
 echo Return ERROR : Result not Found, Make sure you type correctly host or server address
@@ -329,15 +331,15 @@ goto init
 set VAR_ERROR=NOT_FOUND
 for /f "tokens=1" %%b in ("%VAR%") do set VAR_ERROR=%%b
 if %VAR_ERROR%==General (
-    echo [General Failure] %PING_GENERAL_FAILURE% %count_messages%%count%
+    echo [General Failure] %PING_GENERAL_FAILURE%
     goto init
 )
 if %VAR_ERROR%==Reply (
-    echo [Destination net unreachable] %PING_DNU% %count_messages%%count%
+    echo [Destination net unreachable] %PING_DNU%
     goto init
 )
 if %VAR_ERROR%==Request (
-    echo [Timed Out] %PING_TIMED_OUT% %count_messages%%count%
+    echo [Timed Out] %PING_TIMED_OUT% 
     goto init
 )
 echo Return ERROR : Result not Found, Make sure you type correctly host or server address
